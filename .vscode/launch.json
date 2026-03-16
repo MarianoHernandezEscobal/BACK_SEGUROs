@@ -1,0 +1,35 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "command": "npm run start:dev",
+            "name": "seguro",
+            "request": "launch",
+            "type": "node-terminal",
+            "env": {
+            },
+        },
+        {
+            "type": "node",
+            "request": "launch",
+            "name": "Spid local",
+            "runtimeArgs": [
+                "--nolazy",
+                "-r",
+                "ts-node/register"
+            ],
+            "args": [
+                "${workspaceFolder}/src/main.ts"
+            ],
+            "autoAttachChildProcesses": true,
+            "runtimeExecutable": "/usr/local/bin/node",
+            "osx": {
+                "env": {
+                    "NODE_ENV": "local",
+                    "APP_PORT": "8080",
+                    "APP_ENV": "spid35app"
+                }
+            }
+        }
+    ]
+}
