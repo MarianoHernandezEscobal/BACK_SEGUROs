@@ -1,16 +1,15 @@
-FROM node:20
+FROM node:20-alpine
 
-ARG NODE_ENV=production
-ENV NODE_ENV=${NODE_ENV}
-
-WORKDIR /usr/src/app
+WORKDIR /app
 
 COPY package*.json ./
 
-RUN npm install --only=production
+RUN npm install
 
-COPY --from=development /usr/src/app/dist ./dist
+COPY . .
 
-EXPOSE 3000
+RUN npm run build
 
-CMD ["node", "dist/main"]
+EXPOSE 3002
+
+CMD ["npm", "run", "start:prod"]
