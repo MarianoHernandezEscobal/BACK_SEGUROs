@@ -155,4 +155,12 @@ Saludos, Marcela Escobal.`;
     return insurance;
   }
 
+  async remove(id: string) {
+    const insurance = await this.insuranceModel.findByIdAndDelete(id);
+    if (!insurance) {
+      throw new BadRequestException('Seguro no encontrado');
+    }
+    return { message: 'Seguro eliminado', id: insurance._id.toString() };
+  }
+
 }

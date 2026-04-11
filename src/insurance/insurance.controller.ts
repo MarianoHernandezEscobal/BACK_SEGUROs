@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Post, Put, Param, UseGuards } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Post, Put, Param, UseGuards } from '@nestjs/common';
 import { InsuranceService } from './insurance.service';
 import { InsuranceDTO } from './dto/insurance.dto';
 import { AuthorizationGuard } from '../guards/authorization.guard';
@@ -34,6 +34,12 @@ export class InsuranceController {
     @Body() body: Partial<InsuranceDTO>
   ) {
     return this.insuranceService.update(id, body);
+  }
+
+  @Delete(':id')
+  @UseGuards(AuthorizationGuard)
+  remove(@Param('id') id: string) {
+    return this.insuranceService.remove(id);
   }
 
   //genera para mandar recordatorio de seguro
