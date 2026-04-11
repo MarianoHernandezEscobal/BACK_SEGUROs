@@ -1,11 +1,14 @@
 import { Injectable, OnModuleInit } from '@nestjs/common'
 import { Client, LocalAuth } from 'whatsapp-web.js'
-import * as qrcode from 'qrcode-terminal'
+import * as qrcodeTerminal from 'qrcode-terminal'
+import QRCode from 'qrcode'
 
 @Injectable()
 export class WhatsappService implements OnModuleInit {
 
   private client: Client
+  private currentQr: string | null = null
+  private clientReady = false
 
   async onModuleInit() {
 
@@ -23,16 +26,46 @@ export class WhatsappService implements OnModuleInit {
     })
 
     this.client.on('qr', (qr) => {
-      console.log('Escanea el QR con WhatsApp')
-      qrcode.generate(qr, { small: true })
+      this.currentQr = qr
+      console.log('Escanea el QR con WhatsApp (el front puede usar GET /whatsapp/auth/status)')
+      qrcodeTerminal.generate(qr, { small: true })
+    })
+
+    this.client.on('authenticated', () => {
+      this.currentQr = null
     })
 
     this.client.on('ready', () => {
+      this.clientReady = true
+      this.currentQr = null
       console.log('✅ WhatsApp Web conectado')
     })
 
     await this.client.initialize()
 
+  }
+
+  /**
+   * Para el front: poll cada ~1.5s hasta `connected: true`.
+   * Mostrar `<img src={qrDataUrl} alt="WhatsApp" width={280} />` cuando venga `qrDataUrl`.
+   */
+  async getAuthStatus(): Promise<{ connected: boolean; qrDataUrl?: string }> {
+
+    if (this.clientReady) {
+      return { connected: true }
+    }
+
+    if (!this.currentQr) {
+      return { connected: false }
+    }
+
+    const qrDataUrl = await QRCode.toDataURL(this.currentQr, {
+      width: 320,
+      margin: 2,
+      errorCorrectionLevel: 'M',
+    })
+
+    return { connected: false, qrDataUrl }
   }
 
   async sendMessage(phone: string, message: string) {
