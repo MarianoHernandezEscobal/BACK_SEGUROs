@@ -37,11 +37,17 @@ export class ReminderCron {
 
       const message = `Hola ${insurance.name} 👋
 
-Tu seguro de ${insurance.type}
+¿Cómo estás?
+      
+Te avisamos que tu seguro de ${insurance.type}
 Matrícula: ${insurance.tuition}
-📅 Vence: ${formattedDate}
-
-Por favor recuerda pagarlo a tiempo.`;
+📅 Vence el día: ${formattedDate}
+      
+Te recordamos realizar el pago a tiempo para evitar inconvenientes.
+      
+Cualquier cosa estamos a las órdenes 😊
+      
+Saludos, Marcela Escobal.`;
 
       await this.whatsappService.sendMessage(
         insurance.phone,
